@@ -6,16 +6,35 @@ typedef struct knapsack {
 
 };
 
-void read(); // funcao que realiza a leitura da entrada
+FILE *arqIn;
 
-int main(){
+void read(char *entrada); // funcao que realiza a leitura da entrada
+
+int main(int argc, char *argv[]){
+  int num_Itens, num_Rec, best_Sol;
+  int i = 3, j = 0;
+  double **matriz;
+
+  char *entrada = argv[1];
+
+  read(entrada);
+
+  num_Itens = arqIn[0];
+  num_Rec = arqIn[1];
+  best_Sol = arqIn[2];
+
+  while i < num_Itens * num_Rec{
+    matriz[j] = arqIn[i]
+    j++;
+  }
+
+  
 
 }
 
-void read(){
-  FILE *arqIn;
+void read(char *entrada){
 
-  arqIn = fopen("argv[1]", "rt");
+  arqIn = fopen(entrada, "rt");
 
   if(arqIn == NULL){
     printf("Arquivo de entrada não encontrado")
@@ -23,4 +42,5 @@ void read(){
   }
 
   fclose(arqIn);
+  return;
 }
