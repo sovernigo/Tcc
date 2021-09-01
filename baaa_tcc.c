@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<stdbool.h>
 
 typedef struct mochila {
   double atributo; // matriz dimenciona a mochila do problema de forma dinamica
@@ -10,19 +11,23 @@ FILE *arqIn;
 
 void read(char *entrada); // funcao que realiza a leitura da entrada
 
-void inserir(knapsack **cabeca, FILE *arquivo);
+void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec);
 void listar (knapsack *noatual);
+int **AlocaMatriz(int num_Itens, int n_Colonias);
+void ini_Colonia(colony **cabeca, int n_colony, int t_colonia);
 
 int main(int argc, char *argv[]){
   knapsack *inicio = NULL;
   knapsack *atual;
 
   int num_Itens, num_Rec, best_Sol, total_Val;
-  int j = 0;
+  int j = 0, cont = 0;
 
   char *entrada = argv[1];
+  int n_Testes = argv[2];
+  int n_Colonias = argv[3];
 
-  //read(entrada);
+  bool **colonia;
 
   arqIn = fopen(entrada, "r");
 
@@ -38,33 +43,25 @@ int main(int argc, char *argv[]){
   }
 
   total_Val = num_Itens * num_Rec;
+  colonia = AlocaMatriz(num_Itens, n_Colonias);
 
-  printf("%d\n", num_Itens);
-  printf("%d\n", num_Rec);
-  printf("%d\n", best_Sol);
-  printf("%d\n", total_Val);
-
-  inserir(&inicio, arqIn);
+  inserir(&inicio, arqIn, num_Itens, num_Rec);
 
   listar(inicio);
 
-  fclose(arqIn);
+  while(cont < n_Testes){
+
+    ini_Colonia(colonia, &inicio);
+
+    cont++;
+  }
+  fclose(arqIn);]
+
+  LiberaMatriz(colonia, num_Itens);
+
 }
 
-/*void read(char *entrada){
-
-  arqIn = fopen(entrada, "r");
-
-  if(arqIn == NULL){
-    printf("Arquivo de entrada não encontrado");
-    exit(1);
-  }
-
-  fclose(arqIn);
-  return;
-}*/
-
-void inserir(knapsack **cabeca, FILE *arquivo){
+void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec){
   knapsack *noatual, *novo;
   double valor;
 
@@ -78,7 +75,7 @@ void inserir(knapsack **cabeca, FILE *arquivo){
     else {
       noatual = *cabeca;
       while(noatual->prox != NULL){
-        noatual = noatual->prox;
+          noatual = noatual->prox;
       }
       novo = (knapsack *)malloc(sizeof(knapsack));
       novo->atributo = valor;
@@ -88,9 +85,39 @@ void inserir(knapsack **cabeca, FILE *arquivo){
   }
 }
 
+int **AlocaMatriz(int num_Itens, int n_Colonias){
+  int **colonia;
+  int i;
+
+  colonia = (bool **) malloc(num_Itens * sizeof(bool*));
+  if(colonia == NULL){
+    printf("Memoria insuficiente.\n");
+    exit(1);
+  }
+  for(i = 0; i < num_Itens; i++){
+    colonia[i] = (bool *)malloc(n_Colonias * sizeof(bool))
+    if(colonia[i] == NULL){
+      printf("Memoria insuficiente.\n");
+      exit(1);
+    }
+  }
+  return colonia;
+}
+
+void LiberaMatriz(int **colonia, int num_Itens){
+  int i;
+  for(i = 0; i < num_Itens; i++)
+    free(colonia[i]);
+  free(colonia);
+}
+
+void ini_Colonia(colony **cabeca, knapsack **cabeca){
+  return;
+}
+
 void listar (knapsack *noatual){
-  int i=0;
-  while( noatual != NULL) {    /* Enquanto nao chega no fim da lista */
+  int i = 0;
+  while(noatual != NULL) {    /* Enquanto nao chega no fim da lista */
     i++;
     printf("%lf ", noatual->atributo);
     noatual = noatual->prox;     /* Faz noatual apontar para o proximo no */
