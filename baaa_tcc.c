@@ -14,7 +14,7 @@ void read(char *entrada); // funcao que realiza a leitura da entrada
 void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec);
 void listar (knapsack *noatual);
 int **AlocaMatriz(int num_Itens, int n_Colonias);
-void ini_Colonia(colony **cabeca, int n_colony, int t_colonia);
+void ini_Colonia(bool **cabeca, knapsack **inicio);
 
 int main(int argc, char *argv[]){
   knapsack *inicio = NULL;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
 
     cont++;
   }
-  fclose(arqIn);]
+  fclose(arqIn);
 
   LiberaMatriz(colonia, num_Itens);
 
@@ -95,7 +95,7 @@ int **AlocaMatriz(int num_Itens, int n_Colonias){
     exit(1);
   }
   for(i = 0; i < num_Itens; i++){
-    colonia[i] = (bool *)malloc(n_Colonias * sizeof(bool))
+    colonia[i] = (bool *)malloc(n_Colonias * sizeof(bool));
     if(colonia[i] == NULL){
       printf("Memoria insuficiente.\n");
       exit(1);
@@ -111,7 +111,7 @@ void LiberaMatriz(int **colonia, int num_Itens){
   free(colonia);
 }
 
-void ini_Colonia(colony **cabeca, knapsack **cabeca){
+void ini_Colonia(bool **cabeca, knapsack **inicio){
   return;
 }
 
