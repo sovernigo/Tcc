@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+#include<time.h>
 
 typedef struct mochila {
   double atributo; // matriz dimenciona a mochila do problema de forma dinamica
@@ -12,13 +13,14 @@ FILE *arqIn;
 void read(char *entrada); // funcao que realiza a leitura da entrada
 
 void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec);
-void listar (knapsack *noatual);
+void listar (int *vetor, int tamanho);
 int **AlocaMatriz(int num_Itens, int n_Colonias);
-void ini_Colonia(bool **cabeca, knapsack **inicio);
+void ini_Colonia(int *cabeca, int tamanho, int n_Itens);
+
+
+double *tp_Recurso, *p_Recurso, *lim_Recurso;
 
 int main(int argc, char *argv[]){
-  knapsack *inicio = NULL;
-  knapsack *atual;
 
   int num_Itens, num_Rec, best_Sol, total_Val;
   int j = 0, cont = 0;
@@ -27,7 +29,7 @@ int main(int argc, char *argv[]){
   int n_Testes = argv[2];
   int n_Colonias = argv[3];
 
-  bool **colonia;
+  int *colonia;
 
   arqIn = fopen(entrada, "r");
 
@@ -42,16 +44,18 @@ int main(int argc, char *argv[]){
     return 0;
   }
 
-  total_Val = num_Itens * num_Rec;
+  total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
   colonia = AlocaMatriz(num_Itens, n_Colonias);
 
-  inserir(&inicio, arqIn, num_Itens, num_Rec);
+  //inserir(&inicio, arqIn, num_Itens, num_Rec);
 
-  listar(inicio);
+  inserir_Sep(arqIn, num_Itens, num_Rec);
 
   while(cont < n_Testes){
 
-    ini_Colonia(colonia, &inicio);
+    ini_Colonia(colonia, total_Val, num_Itens);
+
+    listar(colonia, total_Val);
 
     cont++;
   }
@@ -85,17 +89,44 @@ void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec){
   }
 }
 
+void inserir_Sep(FILE *arquivo, int n_Itens, int n_Rec){
+  double valor;
+
+  int cont = 0;
+  int i, j = 0;
+
+  tp_Recurso = (double *) malloc(n_Itens * sizeof(double*));
+  p_Recurso = (double *) malloc((n_Itens * n_Rec) * sizeof(double*));
+  lim_Recurso = (double *) malloc(n_Rec * sizeof(double*));
+
+  while(fscanf(arqIn,"%lf", &valor) != EOF){
+
+    if(cont < n_Itens){
+      tp_Recurso[cont] = valor;
+    }
+    else if(n_Itens <= cont < (n_Itens + 1)* n_Rec) {
+      p_Recurso[i] = valor;
+      i++;
+    }
+    else {
+      lim_Recurso[j] = valor;
+      j++;
+    }
+    cont++;
+  }
+}
+
 int **AlocaMatriz(int num_Itens, int n_Colonias){
   int **colonia;
   int i;
 
-  colonia = (bool **) malloc(num_Itens * sizeof(bool*));
+  colonia = (int **) malloc(num_Itens * sizeof(int*));
   if(colonia == NULL){
     printf("Memoria insuficiente.\n");
     exit(1);
   }
   for(i = 0; i < num_Itens; i++){
-    colonia[i] = (bool *)malloc(n_Colonias * sizeof(bool));
+    colonia[i] = (int *)malloc(n_Colonias * sizeof(int));
     if(colonia[i] == NULL){
       printf("Memoria insuficiente.\n");
       exit(1);
@@ -111,15 +142,28 @@ void LiberaMatriz(int **colonia, int num_Itens){
   free(colonia);
 }
 
-void ini_Colonia(bool **cabeca, knapsack **inicio){
+void ini_Colonia(int *cabeca, int tamanho, int n_Itens){
+  int i, random;
+
+  while(i < tamanho){
+    random = rand();
+
+    if(random % 2 == 0){
+      cabeca[i] = 0;
+    }
+    else {
+      cabeca[i] = 1;
+    }
+    i++;
+  }
   return;
 }
 
-void listar (knapsack *noatual){
+void listar (int *vetor, int tamanho){
   int i = 0;
-  while(noatual != NULL) {    /* Enquanto nao chega no fim da lista */
+  while(i < tamanho) {    /* Enquanto nao chega no fim da lista */
+
+    printf("%d ", vetor[i]);    /* Faz noatual apontar para o proximo no */
     i++;
-    printf("%lf ", noatual->atributo);
-    noatual = noatual->prox;     /* Faz noatual apontar para o proximo no */
   }
 }
