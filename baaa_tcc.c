@@ -3,19 +3,19 @@
 #include<stdbool.h>
 #include<time.h>
 
-typedef struct mochila {
+/*typedef struct mochila {
   double atributo; // matriz dimenciona a mochila do problema de forma dinamica
   struct mochila *prox;
-}knapsack;
+}knapsack;*/
 
 FILE *arqIn;
 
 void read(char *entrada); // funcao que realiza a leitura da entrada
 
-void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec);
-void listar (int *vetor, int tamanho);
 int **AlocaMatriz(int num_Itens, int n_Colonias);
-void ini_Colonia(int *cabeca, int tamanho, int n_Itens);
+void ini_Colonia(int **cabeca, int tamanho, int n_Itens);
+void inserir_Sep(FILE *arquivo, int n_Itens, int n_Rec);
+void LiberaMatriz(int **colonia, int num_Itens);
 
 
 double *tp_Recurso, *p_Recurso, *lim_Recurso;
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
   int n_Testes = argv[2];
   int n_Colonias = argv[3];
 
-  int *colonia;
+  int **colonia;
 
   arqIn = fopen(entrada, "r");
 
@@ -47,15 +47,11 @@ int main(int argc, char *argv[]){
   total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
   colonia = AlocaMatriz(num_Itens, n_Colonias);
 
-  //inserir(&inicio, arqIn, num_Itens, num_Rec);
-
   inserir_Sep(arqIn, num_Itens, num_Rec);
 
   while(cont < n_Testes){
 
     ini_Colonia(colonia, total_Val, num_Itens);
-
-    listar(colonia, total_Val);
 
     cont++;
   }
@@ -65,7 +61,7 @@ int main(int argc, char *argv[]){
 
 }
 
-void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec){
+/*void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec){
   knapsack *noatual, *novo;
   double valor;
 
@@ -87,7 +83,7 @@ void inserir(knapsack **cabeca, FILE *arquivo, int n_Itens, int n_Rec){
       noatual->prox = novo;
     }
   }
-}
+}*/
 
 void inserir_Sep(FILE *arquivo, int n_Itens, int n_Rec){
   double valor;
@@ -120,7 +116,7 @@ int **AlocaMatriz(int num_Itens, int n_Colonias){
   int **colonia;
   int i;
 
-  colonia = (int **) malloc(num_Itens * sizeof(int*));
+  colonia = (int **) malloc(num_Itens * sizeof(int**));
   if(colonia == NULL){
     printf("Memoria insuficiente.\n");
     exit(1);
@@ -142,7 +138,7 @@ void LiberaMatriz(int **colonia, int num_Itens){
   free(colonia);
 }
 
-void ini_Colonia(int *cabeca, int tamanho, int n_Itens){
+void ini_Colonia(int **cabeca, int tamanho, int n_Itens){
   int i, random;
 
   while(i < tamanho){
@@ -157,13 +153,4 @@ void ini_Colonia(int *cabeca, int tamanho, int n_Itens){
     i++;
   }
   return;
-}
-
-void listar (int *vetor, int tamanho){
-  int i = 0;
-  while(i < tamanho) {    /* Enquanto nao chega no fim da lista */
-
-    printf("%d ", vetor[i]);    /* Faz noatual apontar para o proximo no */
-    i++;
-  }
 }
