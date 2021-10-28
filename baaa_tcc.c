@@ -11,7 +11,7 @@ void AlocaMatriz(int, int);
 void inserir_Sep(FILE *, int, int);
 void ini_Colonia(int **, int, int);
 void LiberaMatriz(int **, int);
-void checa_Validade(int **, int, int);
+void checa_Validade(int **, int, int, int);
 
 
 int *tp_Recurso, *p_Recurso, *lim_Recurso;
@@ -49,6 +49,8 @@ int main(int argc, char *argv[]){
 
     ini_Colonia(colonia, n_Colonias, num_Itens);
 
+    checa_Validade(colonia, n_Colonias, num_Itens, num_Rec);
+
     cont++;
   }
 
@@ -65,16 +67,20 @@ void inserir_Sep(FILE *arquivo, int n_Itens, int n_Rec){ // função está dando
   lim_Recurso = (int *) malloc(n_Rec * sizeof(int));
 
   for (int j = 0; j < n_Itens; j++)
-	fscanf(arquivo, "%d", &(tp_Recurso[j]));
+	  fscanf(arquivo, "%d", &(tp_Recurso[j]));
 
   //Leitura da matriz de pesos
-  for (int j = 0; j < n_Rec; j++)
-	 for (int k = 0; k < n_Itens; k++)
-	  fscanf(arquivo, "%d", &(p_Recurso[j * n_Itens + k]));
+  for (int j = 0; j < n_Rec; j++){
+	  for (int k = 0; k < n_Itens; k++){
+	    fscanf(arquivo, "%d", &(p_Recurso[j * n_Itens + k]));
+      //printf("%d ", p_Recurso[j * n_Itens + k]);
+    }
+    //printf("\n");
+  }
 
   //Leitura do vetor de restrições
   for (int j = 0; j < n_Rec; j++)
-	fscanf(arquivo, "%d", &(lim_Recurso[j]));
+	  fscanf(arquivo, "%d", &(lim_Recurso[j]));
 }
 
 void AlocaMatriz(int num_Itens, int n_Colonias){
@@ -111,12 +117,42 @@ void ini_Colonia(int **cabeca, int tamanho, int n_Itens){
   for (i = 0; i < tamanho; i++){
 	  for (j = 0; j < n_Itens; j++){
       cabeca[i][j] = rand() % 2;
-      printf("%d ", cabeca[i][j]);
+      //printf("%d ", cabeca[i][j]);
     }
-    printf("\n");
+    //printf("\n");
   }
 }
 
-void checa_Validade(int **cabeca, int tamanho, int n_Itens){
+void checa_Validade(int **cabeca, int tamanho, int n_Itens, int n_Rec){
+  int aux[tamanho][n_Itens];
+  bool valido = true;
 
+  for(int i = 0; i < tamanho; i++){
+    for(int k = 0; k < n_Rec; k++){
+      aux[i][k] = 0;
+      }
+    }
+
+  for(int i = 0; i < tamanho; i++){
+    for(int j = 0; j < n_Itens; j++){
+      if(cabeca[i][j] == 1){
+        for(int k = 0; k < n_Rec; k++){
+          aux[i][k] = aux[i][k] + p_Recurso[j + k * n_Itens];
+        }
+      }
+    }
+    for(int k = 0; k < n_Rec; k++){
+      printf("%d ", aux[i][k]);
+      if(aux[i][k] > lim_Recurso[k]){
+        valido = false;
+      }
+    }
+    printf("\n");
+    if(valido == true){
+      printf("valido\n");
+    }
+    else{
+      printf("invalido\n");
+    }
+  }
 }
