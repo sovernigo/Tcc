@@ -118,6 +118,8 @@ void LiberaMatriz(int **colonia, int n_Colonias){
 void ini_Colonia(int **cabeca, int tamanho, int n_Itens){
   int i, j;
 
+  srand(time(NULL));
+
   for (i = 0; i < tamanho; i++){
 	  for (j = 0; j < n_Itens; j++){
       cabeca[i][j] = rand() % 2;
@@ -164,6 +166,7 @@ void fit(int **cabeca, int tamanho, int n_Itens){
       if(cabeca[i][j] == 1){
         fit_Colonia[i] = fit_Colonia[i] + tp_Recurso[j];
       }
+      //printf("%d ", fit_Colonia[i]);  
     }
     printf("%d ", fit_Colonia[i]);  
   }
