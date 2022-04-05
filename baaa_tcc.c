@@ -47,9 +47,9 @@ int main(int argc, char *argv[]){
 
   AlocaMatriz(num_Itens, n_Colonias);
 
-  while(cont < n_Testes){
+  ini_Colonia(colonia, n_Colonias, num_Itens);
 
-    ini_Colonia(colonia, n_Colonias, num_Itens);
+  while(cont < n_Testes){
 
     checa_Validade(colonia, n_Colonias, num_Itens, num_Rec);
 
@@ -165,7 +165,7 @@ void fit(int **cabeca, int tamanho, int n_Itens){
         fit_Colonia[i] = fit_Colonia[i] + tp_Recurso[j];
       }
     }
-    //printf("%d ", fit_Colonia[i]);  
+    printf("%d ", fit_Colonia[i]);  
   }
 }
 
