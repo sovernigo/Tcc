@@ -3,23 +3,31 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 
 FILE *arqIn;
 
 void AlocaMatriz(int, int);
 void inserir_Sep(FILE *, int, int);
-void ini_Colonia(int **, int, int);
-void LiberaMatriz(int **, int);
-void checa_Validade(int **, int, int, int);
-void fit(int **, int, int);
+void ini_Colonia(int, int);
+void LiberaMatriz(int);
+void checa_Validade(int, int, int);
+void fit(int, int);
+void prep(int);
 void size(int);
 
 int *tp_Recurso, *p_Recurso, *lim_Recurso;
 int **colonia;
 int *fit_Colonia;
+float *fric_surf;
+float *atual_Size;
+float *update_cosc;
+
 
 int main(int argc, char *argv[]){
+
+  int **colonia;
 
   int num_Itens, num_Rec, best_Sol, total_Val;
   int cont = 0;
@@ -42,25 +50,25 @@ int main(int argc, char *argv[]){
 
   total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
 
-
+  //printf("teste");
   inserir_Sep(arqIn, num_Itens, num_Rec);
 
   AlocaMatriz(num_Itens, n_Colonias);
-
-  ini_Colonia(colonia, n_Colonias, num_Itens);
+  
+  ini_Colonia(n_Colonias, num_Itens);
 
   while(cont < n_Testes){
 
-    checa_Validade(colonia, n_Colonias, num_Itens, num_Rec);
+    checa_Validade(n_Colonias, num_Itens, num_Rec);
 
-    fit(colonia, n_Colonias, num_Itens);
+      fit(n_Colonias, num_Itens);
 
-    size(n_Colonias);
+      prep(n_Colonias);
 
     cont++;
   }
 
-  LiberaMatriz(colonia, n_Colonias);
+  LiberaMatriz(n_Colonias);
 
   fclose(arqIn);
 
@@ -99,7 +107,7 @@ void AlocaMatriz(int num_Itens, int n_Colonias){
 
 }
 
-void LiberaMatriz(int **colonia, int n_Colonias){
+void LiberaMatriz(int n_Colonias){
 
 
   //Libera cada linha da matriz
@@ -115,21 +123,21 @@ void LiberaMatriz(int **colonia, int n_Colonias){
 
 }
 
-void ini_Colonia(int **cabeca, int tamanho, int n_Itens){
+void ini_Colonia(int tamanho, int n_Itens){
   int i, j;
 
   srand(time(NULL));
 
   for (i = 0; i < tamanho; i++){
 	  for (j = 0; j < n_Itens; j++){
-      cabeca[i][j] = rand() % 2;
+      colonia[i][j] = rand() % 2;
       //printf("%d ", cabeca[i][j]);
     }
     //printf("\n");
   }
 }
 
-void checa_Validade(int **cabeca, int tamanho, int n_Itens, int n_Rec){
+void checa_Validade(int tamanho, int n_Itens, int n_Rec){
   int aux[tamanho][n_Itens];
   bool valido = true;
 
@@ -140,8 +148,10 @@ void checa_Validade(int **cabeca, int tamanho, int n_Itens, int n_Rec){
     }
 
   for(int i = 0; i < tamanho; i++){
+    valido = true;
+
     for(int j = 0; j < n_Itens; j++){
-      if(cabeca[i][j] == 1){
+      if(colonia[i][j] == 1){
         for(int k = 0; k < n_Rec; k++){
           aux[i][k] = aux[i][k] + p_Recurso[j + k * n_Itens];
         }
@@ -153,9 +163,10 @@ void checa_Validade(int **cabeca, int tamanho, int n_Itens, int n_Rec){
       }
     }
   }
+
 }
 
-void fit(int **cabeca, int tamanho, int n_Itens){
+void fit(int tamanho, int n_Itens){
 
   fit_Colonia = (int *) malloc(tamanho * sizeof(int));
 
@@ -163,20 +174,22 @@ void fit(int **cabeca, int tamanho, int n_Itens){
 
   for(i = 0; i < tamanho; i++){
     for(j = 0; j < n_Itens; j++){
-      if(cabeca[i][j] == 1){
+      if(colonia[i][j] == 1){
         fit_Colonia[i] = fit_Colonia[i] + tp_Recurso[j];
       }
       //printf("%d ", fit_Colonia[i]);  
     }
-    printf("%d ", fit_Colonia[i]);  
+    //printf("%d ", fit_Colonia[i]);  
   }
 }
 
-void size(int n_Colonias){
+void prep(int n_Colonias){
 
-  float atual_Size[n_Colonias];
-  float update_cosc[n_Colonias];
+  atual_Size = (float *) malloc(n_Colonias * sizeof(float));
+  update_cosc = (float *) malloc(n_Colonias * sizeof(float));
+  fric_surf = (float *) malloc(n_Colonias * sizeof(float));
   int i;
+  float aux;
 
   for(i = 0; i < n_Colonias; i++){
     atual_Size[i] = 1;
@@ -185,11 +198,18 @@ void size(int n_Colonias){
   for(i = 0; i < n_Colonias; i++){
     update_cosc[i] =  (atual_Size[i] + 4*(fit_Colonia[i]))/
                       (atual_Size[i] + 2*(fit_Colonia[i]));
+    aux = (3 * atual_Size[i])/(4 * M_1_PI);
+    fric_surf[i] = 2 * M_1_PI * (pow(aux, 1.0/3.0));
+    //printf("%lf", fric_surf[i]);
   }
 
-  for(i = 0; i < n_Colonias; i++){
+}
+
+void size(int n_Colonias){
+
+  for(int i = 0; i < n_Colonias; i++){
     atual_Size[i] = update_cosc[i] * atual_Size[i];
     //printf("%f ", atual_Size[i]);
-  } 
+  }
 
 }
