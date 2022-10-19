@@ -26,6 +26,7 @@ float *update_cosc;
 int num_Itens, num_Rec, best_Sol, total_Val;
 float *fitness;
 int parent;
+int num_Colonias;
 
 
 int main(int argc, char *argv[]){
@@ -38,7 +39,7 @@ int main(int argc, char *argv[]){
 
   strcpy(entrada, argv[1]);
   int num_Testes = atoi(argv[2]);
-  int num_Colonias = atoi(argv[3]);
+  num_Colonias = atoi(argv[3]);
 
   arqIn = fopen(entrada, "r");
 
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]){
   total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
 
   //printf("teste");
-  inserir_Sep(arqIn, num_Itens, num_Rec);
+  inserir_Sep(arqIn);
 
   AlocaMatriz();
   
@@ -77,21 +78,21 @@ int main(int argc, char *argv[]){
 void inserir_Sep(FILE *arquivo){ // função está dando falha na segmentação
 
   tp_Recurso = (int *) malloc(num_Itens * sizeof(int));
-  p_Recurso = (int *) malloc((num_Itens * n_Rec) * sizeof(int));
-  lim_Recurso = (int *) malloc(n_Rec * sizeof(int));
+  p_Recurso = (int *) malloc((num_Itens * num_Rec) * sizeof(int));
+  lim_Recurso = (int *) malloc(num_Rec * sizeof(int));
 
   for (int j = 0; j < num_Itens; j++)
 	  fscanf(arquivo, "%d", &(tp_Recurso[j]));
 
   //Leitura da matriz de pesos
-  for (int j = 0; j < n_Rec; j++){
+  for (int j = 0; j < num_Rec; j++){
 	  for (int k = 0; k < num_Itens; k++){
 	    fscanf(arquivo, "%d", &(p_Recurso[j * num_Itens + k]));
     }
   }
 
   //Leitura do vetor de restrições
-  for (int j = 0; j < n_Rec; j++)
+  for (int j = 0; j < num_Rec; j++)
 	  fscanf(arquivo, "%d", &(lim_Recurso[j]));
 }
 
@@ -130,7 +131,7 @@ void ini_Colonia(){
 
   srand(time(NULL));
 
-  for (i = 0; i < tamanho; i++){
+  for (i = 0; i < num_Colonias; i++){
 	  for (j = 0; j < num_Itens; j++){
       colonia[i][j] = rand() % 2;
       //printf("%d ", cabeca[i][j]);
@@ -141,26 +142,26 @@ void ini_Colonia(){
 }
 
 void checa_Validade(){
-  int aux[tamanho][num_Itens];
+  int aux[num_Colonias][num_Itens];
   bool valido = true;
 
-  for(int i = 0; i < tamanho; i++){
-    for(int k = 0; k < n_Rec; k++){
+  for(int i = 0; i < num_Colonias; i++){
+    for(int k = 0; k < num_Rec; k++){
       aux[i][k] = 0;
       }
     }
 
-  for(int i = 0; i < tamanho; i++){
+  for(int i = 0; i < num_Colonias; i++){
     valido = true;
 
     for(int j = 0; j < num_Itens; j++){
       if(colonia[i][j] == 1){
-        for(int k = 0; k < n_Rec; k++){
+        for(int k = 0; k < num_Rec; k++){
           aux[i][k] = aux[i][k] + p_Recurso[j + k * num_Itens];
         }
       }
     }
-    for(int k = 0; k < n_Rec; k++){
+    for(int k = 0; k < num_Rec; k++){
       if(aux[i][k] > lim_Recurso[k]){
         valido = false;
       }
@@ -171,11 +172,11 @@ void checa_Validade(){
 
 /*void calcula_Fitness(int index, int num_Itens){
 
-  fit_Colonia = (int *) malloc(tamanho * sizeof(int));
+  fit_Colonia = (int *) malloc(num_Colonias * sizeof(int));
 
   int i, j;
 
-  for(i = 0; i < tamanho; i++){
+  for(i = 0; i < num_Colonias; i++){
     for(j = 0; j < num_Itens; j++){
       if(colonia[i][j] == 1){
         fit_Colonia[i] = fit_Colonia[i] + tp_Recurso[j];
@@ -188,14 +189,12 @@ void checa_Validade(){
 
 void calcula_Fitness(int index){
 
-  int i, desl;
-
-  desl = index + num_Itens;
+  int i;
 
   fitness[index] = 0;
 
   for(i = 0; i < num_Itens; i++){
-    fitness[index] += colonia[desl + i] * p_Recurso[i];
+    fitness[index] += colonia[index][i] * p_Recurso[i];
   }
 
 }
@@ -233,10 +232,10 @@ void tournament_Select(){
   }
 
   if(fitness[pool[0]]> fitness[pool[1]]){
-    parent = pool[0]
+    parent = pool[0];
   }
   else {
-    parent = pool[1]
+    parent = pool[1];
   }
 
   free(pool);
@@ -247,7 +246,7 @@ void movement(int index){
 	int m[num_Colonias], k[num_Colonias], l[num_Colonias];
 	
 	for(int i = 1; i < num_Colonias; i++){
-		m[i] = 
+		m[i] = i;
 	}
 	
 }
