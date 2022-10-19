@@ -25,6 +25,7 @@ float *atual_Size;
 float *update_cosc;
 int num_Itens, num_Rec, best_Sol, total_Val;
 float *fitness;
+int parent;
 
 
 int main(int argc, char *argv[]){
@@ -228,12 +229,21 @@ void tournament_Select(){
   pool = (int*) malloc(poolSize * sizeof(int));
 
   for (i = 0; i < poolSize; i++){
-    pool[i] = rand() % 
+    pool[i] = rand() % num_Colonias;
   }
+
+  if(fitness[pool[0]]> fitness[pool[1]]){
+    parent = pool[0]
+  }
+  else {
+    parent = pool[1]
+  }
+
+  free(pool);
 
 }
 
-void movement(){
+void movement(int index){
 	int m[num_Colonias], k[num_Colonias], l[num_Colonias];
 	
 	for(int i = 1; i < num_Colonias; i++){
