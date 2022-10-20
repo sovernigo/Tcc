@@ -27,6 +27,8 @@ int num_Itens, num_Rec, best_Sol, total_Val;
 float *fitness;
 int parent;
 int num_Colonias;
+float *m, *k, *l;
+float shear_Force = 2;
 
 
 int main(int argc, char *argv[]){
@@ -36,6 +38,10 @@ int main(int argc, char *argv[]){
   int cont = 0;
 
   char entrada[40];
+
+  m = (float *) malloc(num_Colonias * sizeof(float));
+  k = (float *) malloc(num_Colonias * sizeof(float));
+  l = (float *) malloc(num_Colonias * sizeof(float));
 
   strcpy(entrada, argv[1]);
   int num_Testes = atoi(argv[2]);
@@ -243,11 +249,21 @@ void tournament_Select(){
 }
 
 void movement(int index){
-	int m[num_Colonias], k[num_Colonias], l[num_Colonias];
-	
-	for(int i = 1; i < num_Colonias; i++){
-		m[i] = i;
-	}
+	float *m_Nova;
+  float p;
+  int m, k, l;
+
+  p = (rand() % (1 - (-1) + 1)) + (-1);
+
+  m = rand() % num_Itens;
+
+  m_Nova = (float *) malloc(num_Itens * sizeof(float));
+
+  for(int i = 0; i < num_Itens, i++){
+    m_Nova[i] = colonia[index][i];
+  }
+
+  m_Nova[index] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
 	
 }
 
