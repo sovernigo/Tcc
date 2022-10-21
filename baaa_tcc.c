@@ -39,10 +39,6 @@ int main(int argc, char *argv[]){
 
   char entrada[40];
 
-  m = (float *) malloc(num_Colonias * sizeof(float));
-  k = (float *) malloc(num_Colonias * sizeof(float));
-  l = (float *) malloc(num_Colonias * sizeof(float));
-
   strcpy(entrada, argv[1]);
   int num_Testes = atoi(argv[2]);
   num_Colonias = atoi(argv[3]);
@@ -58,6 +54,10 @@ int main(int argc, char *argv[]){
 
 
   total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
+
+  m = (float *) malloc(num_Colonias * sizeof(float));
+  k = (float *) malloc(num_Colonias * sizeof(float));
+  l = (float *) malloc(num_Colonias * sizeof(float));
 
   //printf("teste");
   inserir_Sep(arqIn);
@@ -212,6 +212,7 @@ void prep(){
   fric_surf = (float *) malloc(num_Colonias * sizeof(float));
   int i;
   float aux;
+  float raiz;
 
   for(i = 0; i < num_Colonias; i++){
     atual_Size[i] = 1;
@@ -221,7 +222,8 @@ void prep(){
     update_cosc[i] =  (atual_Size[i] + 4*(fit_Colonia[i]))/
                       (atual_Size[i] + 2*(fit_Colonia[i]));
     aux = (3 * atual_Size[i])/(4 * M_1_PI);
-    fric_surf[i] = 2 * M_1_PI * (pow(aux, 1.0/3.0));
+    raiz = pow(aux, 1.0/3.0);
+    fric_surf[i] = 2 * M_1_PI * (raiz);
     //printf("%lf", fric_surf[i]);
   }
 
@@ -251,20 +253,25 @@ void tournament_Select(){
 void movement(int index){
 	float *m_Nova;
   float p;
+  float alpha, beta;
   int m, k, l;
 
   p = (rand() % (1 - (-1) + 1)) + (-1);
 
   m = rand() % num_Itens;
+  k = rand() % num_Itens;
+  l = rand() % num_Itens;
 
   m_Nova = (float *) malloc(num_Itens * sizeof(float));
 
-  for(int i = 0; i < num_Itens, i++){
+  for(int i = 0; i < num_Itens; i++){
     m_Nova[i] = colonia[index][i];
   }
 
   m_Nova[index] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-	
+	m_Nova[index] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+  m_Nova[index] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+
 }
 
 void size(){
