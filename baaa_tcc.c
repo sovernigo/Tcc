@@ -221,7 +221,7 @@ void prep(){
   for(i = 0; i < num_Colonias; i++){
     update_cosc[i] =  (atual_Size[i] + 4*(fit_Colonia[i]))/
                       (atual_Size[i] + 2*(fit_Colonia[i]));
-    aux = (3 * atual_Size[i])/(4 * M_1_PI);
+    aux = (3 * atual_Size[i])/(4 * M_PI);
     raiz = pow(aux, 1.0/3.0);
     fric_surf[i] = 2 * M_1_PI * (raiz);
     //printf("%lf", fric_surf[i]);
@@ -251,12 +251,16 @@ void tournament_Select(){
 }
 
 void movement(int index){
-	float *m_Nova;
-  float p;
-  float alpha, beta;
+	double *m_Nova;
+  double p;
+  double alpha, beta;
   int m, k, l;
 
+  // (rand() % (upper - lower + 1)) + lower;
+
   p = (rand() % (1 - (-1) + 1)) + (-1);
+  alpha = (rand() % ((2 * M_PI) - (-1) + 0)) + 0;
+  beta = (rand() % ((2 * M_PI) - (-1) + 0)) + 0;
 
   m = rand() % num_Itens;
   k = rand() % num_Itens;
