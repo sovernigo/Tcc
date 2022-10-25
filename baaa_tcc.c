@@ -119,7 +119,7 @@ void LiberaMatriz(){
 
   //Libera cada linha da matriz
   for (int i = 0; i < num_Colonias; i++)
-	free(colonia[i]);
+	  free(colonia[i]);
 
   //Libera a matriz
   free(colonia);
@@ -127,6 +127,7 @@ void LiberaMatriz(){
   free(tp_Recurso);
   free(p_Recurso);
   free(lim_Recurso);
+  free(m_Nova);
 
 }
 
@@ -276,6 +277,26 @@ void movement(int index){
 	m_Nova[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
   m_Nova[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
 
+}
+
+void discretize(){
+
+  double random;
+  double gx;
+
+  random = (rand() % (1 - (-1) + 1)) + (-1);
+
+  for(int i = 0; i < num_Itens; i++){
+    if(m_Nova[i] % 1 != 0.0){
+      gx = tanh(m_Nova[i]);
+       if(gx < random){
+        m_Nova[i] = 0;
+       }
+       else {
+        m_Nova[i] = 1;
+       }
+    }
+  }
 }
 
 void size(){
