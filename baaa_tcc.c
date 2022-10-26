@@ -258,6 +258,7 @@ void movement(int index){
   double p;
   double alpha, beta;
   int m, k, l;
+  float rand1 = (rand() / (float) RAND_MAX);
 
   // (rand() % (upper - lower + 1)) + lower;
 
