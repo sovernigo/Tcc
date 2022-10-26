@@ -15,6 +15,8 @@ void LiberaMatriz();
 void checa_Validade();
 void calcula_Fitness(int);
 void prep();
+void tournament_Select();
+void movement(int);
 void size();
 
 int *tp_Recurso, *p_Recurso, *lim_Recurso;
