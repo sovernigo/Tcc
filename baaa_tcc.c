@@ -21,7 +21,6 @@ void size();
 
 int *tp_Recurso, *p_Recurso, *lim_Recurso;
 int **colonia;
-int *fit_Colonia;
 float *fric_surf;
 float *atual_Size;
 float *update_cosc;
@@ -31,6 +30,7 @@ int parent;
 int num_Colonias;
 float *m, *k, *l;
 float shear_Force = 2;
+double *m_Nova;
 
 
 int main(int argc, char *argv[]){
@@ -51,9 +51,8 @@ int main(int argc, char *argv[]){
     printf("Arquivo de entrada não encontrado");
     exit(1);
   }
-
+  
   fscanf(arqIn, "%d %d %d", &num_Itens, &num_Rec, &best_Sol);
-
 
   total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
 
@@ -61,18 +60,23 @@ int main(int argc, char *argv[]){
   k = (float *) malloc(num_Colonias * sizeof(float));
   l = (float *) malloc(num_Colonias * sizeof(float));
 
-  //printf("teste");
   inserir_Sep(arqIn);
 
   AlocaMatriz();
-  
-  ini_Colonia();
 
   while(cont < num_Testes){
 
+    ini_Colonia();
+
     checa_Validade();
 
-      prep();
+    prep();
+
+    printf("teste\n");
+
+    tournament_Select();
+
+    movement(1);
 
     cont++;
   }
@@ -213,7 +217,7 @@ void prep(){
   atual_Size = (float *) malloc(num_Colonias * sizeof(float));
   update_cosc = (float *) malloc(num_Colonias * sizeof(float));
   fric_surf = (float *) malloc(num_Colonias * sizeof(float));
-  int i;
+  int i, j;
   float aux;
   float raiz;
 
@@ -222,8 +226,14 @@ void prep(){
   }
 
   for(i = 0; i < num_Colonias; i++){
-    update_cosc[i] =  (atual_Size[i] + 4*(fit_Colonia[i]))/
-                      (atual_Size[i] + 2*(fit_Colonia[i]));
+    for(j = 0; j < num_Itens; j++){
+      fitness[i] = fitness[i] + tp_Recurso[j];
+    }
+  }
+
+  for(i = 0; i < num_Colonias; i++){
+    update_cosc[i] =  (atual_Size[i] + 4*(fitness[i]))/
+                      (atual_Size[i] + 2*(fitness[i]));
     aux = (3 * atual_Size[i])/(4 * M_PI);
     raiz = pow(aux, 1.0/3.0);
     fric_surf[i] = 2 * M_1_PI * (raiz);
@@ -254,23 +264,23 @@ void tournament_Select(){
 }
 
 void movement(int index){
-	double *m_Nova;
   double p;
   double alpha, beta;
   int m, k, l;
   float rand1 = (rand() / (float) RAND_MAX);
 
   // (rand() % (upper - lower + 1)) + lower;
+  // float rand1 = (rand() / (float) RAND_MAX);
 
   p = (rand() % (1 - (-1) + 1)) + (-1);
-  alpha = (rand() % ((2 * M_PI) - (-1) + 0)) + 0;
-  beta = (rand() % ((2 * M_PI) - (-1) + 0)) + 0;
+  alpha = (rand() / (double) (2 * M_PI));
+  beta = (rand() / (double) (2 * M_PI));
 
   m = rand() % num_Itens;
   k = rand() % num_Itens;
   l = rand() % num_Itens;
 
-  m_Nova = (float *) malloc(num_Itens * sizeof(float));
+  m_Nova = (double *) malloc(num_Itens * sizeof(double));
 
   for(int i = 0; i < num_Itens; i++){
     m_Nova[i] = colonia[index][i];
@@ -279,6 +289,8 @@ void movement(int index){
   m_Nova[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
 	m_Nova[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
   m_Nova[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+
+  discretize();
 
 }
 
@@ -290,7 +302,7 @@ void discretize(){
   random = (rand() % (1 - (-1) + 1)) + (-1);
 
   for(int i = 0; i < num_Itens; i++){
-    if(m_Nova[i] % 1 != 0.0){
+    if(fmod(m_Nova[i], 1) != 0.0){
       gx = tanh(m_Nova[i]);
        if(gx < random){
         m_Nova[i] = 0;
