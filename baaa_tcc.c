@@ -4,9 +4,15 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <inttypes.h>
 
 
 FILE *arqIn;
+
+typedef struct {
+	int index;
+	double psUt;
+}psUtOrd;
 
 void AlocaMatriz();
 void inserir_Sep(FILE *);
@@ -17,7 +23,10 @@ void calcula_Fitness(int);
 void prep();
 void tournament_Select();
 void movement(int);
+void discretize();
 void size();
+void psUtCalculate();
+int cmpFunc(const void*, const void*);
 
 int *tp_Recurso, *p_Recurso, *lim_Recurso;
 int **colonia;
@@ -30,7 +39,8 @@ int parent;
 int num_Colonias;
 float *m, *k, *l;
 float shear_Force = 2;
-double *m_Nova;
+double *col_Aux;
+psUtOrd *psUtOrder;
 
 
 int main(int argc, char *argv[]){
@@ -59,10 +69,13 @@ int main(int argc, char *argv[]){
   m = (float *) malloc(num_Colonias * sizeof(float));
   k = (float *) malloc(num_Colonias * sizeof(float));
   l = (float *) malloc(num_Colonias * sizeof(float));
+  psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
 
   inserir_Sep(arqIn);
 
   AlocaMatriz();
+
+  psUtCalculate();
 
   while(cont < num_Testes){
 
@@ -72,7 +85,7 @@ int main(int argc, char *argv[]){
 
     prep();
 
-    printf("teste\n");
+    //printf("teste\n");
 
     tournament_Select();
 
@@ -133,7 +146,7 @@ void LiberaMatriz(){
   free(tp_Recurso);
   free(p_Recurso);
   free(lim_Recurso);
-  free(m_Nova);
+  free(col_Aux);
 
 }
 
@@ -222,7 +235,7 @@ void prep(){
   float raiz;
 
   for(i = 0; i < num_Colonias; i++){
-    atual_Size[i] = 1;
+    atual_Size[i] = 1.0;
   }
 
   for(i = 0; i < num_Colonias; i++){
@@ -239,7 +252,6 @@ void prep(){
     fric_surf[i] = 2 * M_1_PI * (raiz);
     //printf("%lf", fric_surf[i]);
   }
-
 }
 
 void tournament_Select(){
@@ -280,15 +292,15 @@ void movement(int index){
   k = rand() % num_Itens;
   l = rand() % num_Itens;
 
-  m_Nova = (double *) malloc(num_Itens * sizeof(double));
+  col_Aux = (double *) malloc(num_Itens * sizeof(double));
 
   for(int i = 0; i < num_Itens; i++){
-    m_Nova[i] = colonia[index][i];
+    col_Aux[i] = colonia[index][i];
   }
 
-  m_Nova[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-	m_Nova[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
-  m_Nova[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+  col_Aux[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
+	col_Aux[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+  col_Aux[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
 
   discretize();
 
@@ -302,16 +314,50 @@ void discretize(){
   random = (rand() % (1 - (-1) + 1)) + (-1);
 
   for(int i = 0; i < num_Itens; i++){
-    if(fmod(m_Nova[i], 1) != 0.0){
-      gx = tanh(m_Nova[i]);
+    if(fmod(col_Aux[i], 1) != 0.0){
+      gx = tanh(col_Aux[i]);
+      printf("%lf\n", gx);
        if(gx < random){
-        m_Nova[i] = 0;
+        col_Aux[i] = 0;
        }
        else {
-        m_Nova[i] = 1;
+        col_Aux[i] = 1;
        }
     }
   }
+}
+
+void psUtCalculate(){
+  int i, j;
+  double delta;
+
+  for(i = 0; i < num_Itens; i++){
+    delta = 0.0;
+    
+    for(j = 0; j < num_Rec; j++){
+      delta += p_Recurso[j + i * num_Itens];
+    }
+    psUtOrder[i].psUt = tp_Recurso[i] / delta;		
+		psUtOrder[i].index = i;	
+  }
+  qsort(psUtOrder, (size_t) num_Itens, sizeof(psUtOrder), cmpFunc);
+}
+
+int cmpFunc(const void *a, const void *b){
+   //return ( *(int*)a - *(int*)b );
+   //return (((AuxPeso*)a)->peso - ((AuxPeso*)b)->peso );
+   
+  if (((psUtOrd*)a)->psUt > ((psUtOrd*)b)->psUt)
+	  return 1;
+
+	if (((psUtOrd*)a)->psUt < ((psUtOrd*)b)->psUt)
+		return -1;
+		
+	return 0;
+}
+
+void dropAdd(){
+
 }
 
 void size(){
