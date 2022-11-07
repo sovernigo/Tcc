@@ -29,7 +29,7 @@ void psUtCalculate();
 int cmpFunc(const void*, const void*);
 
 int *tp_Recurso, *p_Recurso, *lim_Recurso;
-int **colonia;
+double **colonia;
 float *fric_surf;
 float *atual_Size;
 float *update_cosc;
@@ -81,8 +81,6 @@ int main(int argc, char *argv[]){
 
     ini_Colonia();
 
-    checa_Validade();
-
     prep();
 
     //printf("teste\n");
@@ -128,7 +126,7 @@ void AlocaMatriz(){
   colonia = (int**) malloc(num_Colonias * sizeof(int*));
 
   for(i = 0; i < num_Colonias; i++){
-    colonia[i] = (int*) malloc(num_Itens * sizeof(int));
+    colonia[i] = (double*) malloc(num_Itens * sizeof(double));
   }
 
 }
@@ -165,6 +163,7 @@ void ini_Colonia(){
     calcula_Fitness(i);
     //printf("\n");
   }
+  checa_Validade();
 }
 
 void checa_Validade(){
@@ -239,9 +238,9 @@ void prep(){
   }
 
   for(i = 0; i < num_Colonias; i++){
-    for(j = 0; j < num_Itens; j++){
-      fitness[i] = fitness[i] + tp_Recurso[j];
-    }
+    for(i = 0; i < num_Itens; i++){
+    fitness[index] += colonia[index][i] * p_Recurso[i];
+  }
   }
 
   for(i = 0; i < num_Colonias; i++){
@@ -280,6 +279,7 @@ void movement(int index){
   double alpha, beta;
   int m, k, l;
   float rand1 = (rand() / (float) RAND_MAX);
+  double fit;
 
   // (rand() % (upper - lower + 1)) + lower;
   // float rand1 = (rand() / (float) RAND_MAX);
@@ -293,16 +293,27 @@ void movement(int index){
   l = rand() % num_Itens;
 
   col_Aux = (double *) malloc(num_Itens * sizeof(double));
+  fit = fitness[index];
 
   for(int i = 0; i < num_Itens; i++){
     col_Aux[i] = colonia[index][i];
   }
 
-  col_Aux[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-	col_Aux[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
-  col_Aux[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+  colonia[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
+	colonia[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+  colonia[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
 
   discretize();
+
+  
+
+  calcula_Fitness[index];
+
+  if(fit > fitness[index]){
+    for(int i = 0; i < num_Itens; i++){
+      colonia[index][i] = col_Aux[i];
+    }
+  }
 
 }
 
