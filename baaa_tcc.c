@@ -344,6 +344,9 @@ void movement(int index){
       colonia[index][i] = col_Aux[i];
     }
   }
+  else{
+    energy[index] = energy[index] - energyLoss;
+  }
 
 }
 
