@@ -399,7 +399,7 @@ int cmpFunc(const void *a, const void *b){
 
 void dropAdd(){
 
-  int i;
+  int i = 0; 
   
 }
 
