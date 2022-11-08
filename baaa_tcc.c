@@ -41,6 +41,8 @@ float *m, *k, *l;
 float shear_Force = 2;
 double *col_Aux;
 psUtOrd *psUtOrder;
+float energyLoss = 0.3;
+double energy;
 
 
 int main(int argc, char *argv[]){
@@ -49,11 +51,14 @@ int main(int argc, char *argv[]){
 
   int cont = 0;
 
+  int desl = 0;
+
   char entrada[40];
 
   strcpy(entrada, argv[1]);
   int num_Testes = atoi(argv[2]);
   num_Colonias = atoi(argv[3]);
+  energy = atoi(argv[4])
 
   arqIn = fopen(entrada, "r");
 
@@ -85,9 +90,17 @@ int main(int argc, char *argv[]){
 
     //printf("teste\n");
 
-    tournament_Select();
+    while(energy > 0){
 
-    movement(1);
+      tournament_Select();
+
+      movement(desl);
+
+      energy -= energyLoss;
+
+      desl++;
+      
+    }
 
     cont++;
   }
@@ -238,9 +251,7 @@ void prep(){
   }
 
   for(i = 0; i < num_Colonias; i++){
-    for(i = 0; i < num_Itens; i++){
-    fitness[index] += colonia[index][i] * p_Recurso[i];
-  }
+    calcula_Fitness(i);
   }
 
   for(i = 0; i < num_Colonias; i++){
@@ -307,7 +318,7 @@ void movement(int index){
 
   
 
-  calcula_Fitness[index];
+  calcula_Fitness(index);
 
   if(fit > fitness[index]){
     for(int i = 0; i < num_Itens; i++){
