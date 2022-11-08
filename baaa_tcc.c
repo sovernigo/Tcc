@@ -20,7 +20,7 @@ void ini_Colonia();
 void LiberaMatriz();
 void checa_Validade();
 void calcula_Fitness(int);
-void prep();
+void prep(int);
 void tournament_Select();
 void movement(int);
 void discretize();
@@ -71,9 +71,15 @@ int main(int argc, char *argv[]){
   l = (float *) malloc(num_Colonias * sizeof(float));
   psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
 
+  //printf("teste\n");
+
   inserir_Sep(arqIn);
 
+  //printf("teste\n");
+
   AlocaMatriz();
+
+  //printf("teste\n");
 
   psUtCalculate();
 
@@ -81,13 +87,13 @@ int main(int argc, char *argv[]){
 
     ini_Colonia();
 
-    prep();
+    prep(0);
 
     //printf("teste\n");
 
     tournament_Select();
 
-    movement(1);
+    movement(0);
 
     cont++;
   }
@@ -123,7 +129,7 @@ void AlocaMatriz(){
 
   int i, j;
 
-  colonia = (int**) malloc(num_Colonias * sizeof(int*));
+  colonia = (double**) malloc(num_Colonias * sizeof(double*));
 
   for(i = 0; i < num_Colonias; i++){
     colonia[i] = (double*) malloc(num_Itens * sizeof(double));
@@ -224,7 +230,7 @@ void calcula_Fitness(int index){
 
 }
 
-void prep(){
+void prep(int index){
 
   atual_Size = (float *) malloc(num_Colonias * sizeof(float));
   update_cosc = (float *) malloc(num_Colonias * sizeof(float));
@@ -299,15 +305,15 @@ void movement(int index){
     col_Aux[i] = colonia[index][i];
   }
 
-  colonia[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-	colonia[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
-  colonia[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+  colonia[index][m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
+	colonia[index][k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+  colonia[index][l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
 
   discretize();
 
   
 
-  calcula_Fitness[index];
+  calcula_Fitness(index);
 
   if(fit > fitness[index]){
     for(int i = 0; i < num_Itens; i++){
