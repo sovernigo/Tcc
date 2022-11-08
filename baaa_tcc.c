@@ -20,7 +20,7 @@ void ini_Colonia();
 void LiberaMatriz();
 void checa_Validade();
 void calcula_Fitness(int);
-void prep(int);
+void prep();
 void tournament_Select();
 void movement(int);
 void discretize();
@@ -41,6 +41,9 @@ float *m, *k, *l;
 float shear_Force = 2;
 double *col_Aux;
 psUtOrd *psUtOrder;
+float energyLoss = 0.3;
+double *energy;
+double energyInt;
 
 
 int main(int argc, char *argv[]){
@@ -49,11 +52,14 @@ int main(int argc, char *argv[]){
 
   int cont = 0;
 
+  int desl = 0;
+
   char entrada[40];
 
   strcpy(entrada, argv[1]);
   int num_Testes = atoi(argv[2]);
   num_Colonias = atoi(argv[3]);
+  energyInt = atoi(argv[4]);
 
   arqIn = fopen(entrada, "r");
 
@@ -69,17 +75,16 @@ int main(int argc, char *argv[]){
   m = (float *) malloc(num_Colonias * sizeof(float));
   k = (float *) malloc(num_Colonias * sizeof(float));
   l = (float *) malloc(num_Colonias * sizeof(float));
+  energy = (double *) malloc(num_Colonias * sizeof(double));
   psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
 
-  //printf("teste\n");
+  for(int k = 0; k < num_Colonias; k++){
+    energy[k] = energyInt;
+  }
 
   inserir_Sep(arqIn);
 
-  //printf("teste\n");
-
   AlocaMatriz();
-
-  //printf("teste\n");
 
   psUtCalculate();
 
@@ -87,13 +92,27 @@ int main(int argc, char *argv[]){
 
     ini_Colonia();
 
-    prep(0);
+    prep();
 
     //printf("teste\n");
 
-    tournament_Select();
+    do{
 
-    movement(0);
+      if(energy[desl] < 0){
+        desl++;
+        continue;
+      }
+
+      //printf("%d\n", desl);
+      printf("%lf\n", energy[desl]);
+
+      tournament_Select();
+
+      movement(desl);
+
+      energy[desl] = energy[desl] - energyLoss;
+      
+    }while(energy[desl] > 0.0);
 
     cont++;
   }
@@ -151,6 +170,7 @@ void LiberaMatriz(){
   free(p_Recurso);
   free(lim_Recurso);
   free(col_Aux);
+  free(energy);
 
 }
 
@@ -230,7 +250,7 @@ void calcula_Fitness(int index){
 
 }
 
-void prep(int index){
+void prep(){
 
   atual_Size = (float *) malloc(num_Colonias * sizeof(float));
   update_cosc = (float *) malloc(num_Colonias * sizeof(float));
@@ -244,9 +264,7 @@ void prep(int index){
   }
 
   for(i = 0; i < num_Colonias; i++){
-    for(i = 0; i < num_Itens; i++){
-    fitness[index] += colonia[index][i] * p_Recurso[i];
-  }
+    calcula_Fitness(i);
   }
 
   for(i = 0; i < num_Colonias; i++){
@@ -263,6 +281,10 @@ void tournament_Select(){
   int i, poolSize;
   int *pool;
 
+  poolSize = 2;
+
+  //printf("teste\n");
+
   pool = (int*) malloc(poolSize * sizeof(int));
 
   for (i = 0; i < poolSize; i++){
@@ -275,6 +297,8 @@ void tournament_Select(){
   else {
     parent = pool[1];
   }
+
+  //printf("teste2\n");
 
   free(pool);
 
@@ -333,7 +357,7 @@ void discretize(){
   for(int i = 0; i < num_Itens; i++){
     if(fmod(col_Aux[i], 1) != 0.0){
       gx = tanh(col_Aux[i]);
-      printf("%lf\n", gx);
+      //printf("%lf\n", gx);
        if(gx < random){
         col_Aux[i] = 0;
        }
@@ -374,7 +398,7 @@ int cmpFunc(const void *a, const void *b){
 }
 
 void dropAdd(){
-
+  
 }
 
 void size(){
