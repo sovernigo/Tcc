@@ -42,7 +42,8 @@ float shear_Force = 2;
 double *col_Aux;
 psUtOrd *psUtOrder;
 float energyLoss = 0.3;
-double energy;
+double *energy;
+double energyInt;
 
 
 int main(int argc, char *argv[]){
@@ -58,7 +59,7 @@ int main(int argc, char *argv[]){
   strcpy(entrada, argv[1]);
   int num_Testes = atoi(argv[2]);
   num_Colonias = atoi(argv[3]);
-  energy = atoi(argv[4])
+  energyInt = atoi(argv[4]);
 
   arqIn = fopen(entrada, "r");
 
@@ -74,7 +75,12 @@ int main(int argc, char *argv[]){
   m = (float *) malloc(num_Colonias * sizeof(float));
   k = (float *) malloc(num_Colonias * sizeof(float));
   l = (float *) malloc(num_Colonias * sizeof(float));
+  energy = (double *) malloc(num_Colonias * sizeof(double));
   psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
+
+  for(int k = 0; k < num_Colonias; k++){
+    energy[k] = energyInt;
+  }
 
   inserir_Sep(arqIn);
 
@@ -90,17 +96,23 @@ int main(int argc, char *argv[]){
 
     //printf("teste\n");
 
-    while(energy > 0){
+    do{
+
+      if(energy[desl] < 0){
+        desl++;
+        continue;
+      }
+
+      //printf("%d\n", desl);
+      printf("%lf\n", energy[desl]);
 
       tournament_Select();
 
       movement(desl);
 
-      energy -= energyLoss;
-
-      desl++;
+      energy[desl] = energy[desl] - energyLoss;
       
-    }
+    }while(energy[desl] > 0.0);
 
     cont++;
   }
@@ -136,7 +148,7 @@ void AlocaMatriz(){
 
   int i, j;
 
-  colonia = (int**) malloc(num_Colonias * sizeof(int*));
+  colonia = (double**) malloc(num_Colonias * sizeof(double*));
 
   for(i = 0; i < num_Colonias; i++){
     colonia[i] = (double*) malloc(num_Itens * sizeof(double));
@@ -158,6 +170,7 @@ void LiberaMatriz(){
   free(p_Recurso);
   free(lim_Recurso);
   free(col_Aux);
+  free(energy);
 
 }
 
@@ -268,6 +281,10 @@ void tournament_Select(){
   int i, poolSize;
   int *pool;
 
+  poolSize = 2;
+
+  //printf("teste\n");
+
   pool = (int*) malloc(poolSize * sizeof(int));
 
   for (i = 0; i < poolSize; i++){
@@ -280,6 +297,8 @@ void tournament_Select(){
   else {
     parent = pool[1];
   }
+
+  //printf("teste2\n");
 
   free(pool);
 
@@ -310,9 +329,9 @@ void movement(int index){
     col_Aux[i] = colonia[index][i];
   }
 
-  colonia[m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-	colonia[k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
-  colonia[l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+  colonia[index][m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
+	colonia[index][k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+  colonia[index][l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
 
   discretize();
 
@@ -338,7 +357,7 @@ void discretize(){
   for(int i = 0; i < num_Itens; i++){
     if(fmod(col_Aux[i], 1) != 0.0){
       gx = tanh(col_Aux[i]);
-      printf("%lf\n", gx);
+      //printf("%lf\n", gx);
        if(gx < random){
         col_Aux[i] = 0;
        }
@@ -379,7 +398,7 @@ int cmpFunc(const void *a, const void *b){
 }
 
 void dropAdd(){
-
+  
 }
 
 void size(){
