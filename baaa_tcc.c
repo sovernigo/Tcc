@@ -344,6 +344,9 @@ void movement(int index){
       colonia[index][i] = col_Aux[i];
     }
   }
+  else{
+    energy[index] = energy[index] - energyLoss;
+  }
 
 }
 
@@ -398,8 +401,11 @@ int cmpFunc(const void *a, const void *b){
 }
 
 void dropAdd(){
+<<<<<<< HEAD
 
   
+=======
+>>>>>>> 07120e5bd97a6162320439513985bee4ad3316c0
   
 }
 
