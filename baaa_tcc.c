@@ -44,11 +44,10 @@ psUtOrd *psUtOrder;
 float energyLoss = 0.3;
 double *energy;
 double energyInt;
+int **rc;
 
 
 int main(int argc, char *argv[]){
-
-  int **colonia;
 
   int cont = 0;
 
@@ -77,6 +76,12 @@ int main(int argc, char *argv[]){
   l = (float *) malloc(num_Colonias * sizeof(float));
   energy = (double *) malloc(num_Colonias * sizeof(double));
   psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
+
+  rc = (int **) malloc(num_Itens * sizeof(int*));
+
+  for(i = 0; i < num_Itens; i++){
+    rc[i] = (int*) malloc(num_Rec * sizeof(int));
+  }
 
   for(int k = 0; k < num_Colonias; k++){
     energy[k] = energyInt;
@@ -175,17 +180,33 @@ void LiberaMatriz(){
 }
 
 void ini_Colonia(){
-  int i, j;
+  int i, j, l;
 
   fitness = (float*) malloc(num_Colonias * sizeof(float));
 
   srand(time(NULL));
 
+  for(i = 0; i < num_Itens; i++){
+    for(j = 0; j < num_Rec; j++){
+      rc[index][j] = p_Recurso[j];
+    }
+  }
+
   for (i = 0; i < num_Colonias; i++){
 	  for (j = 0; j < num_Itens; j++){
       colonia[i][j] = rand() % 2;
       //printf("%d ", cabeca[i][j]);
+      if(colonia[i][j] == 1){
+        for(l = 0; l < num_Rec; l++){
+          rc[j][l] = rc[j][l] - p_Recurso[j][l];
+        }
+      }
     }
+
+    if(!isFeasible(i)){
+      dropAdd(i);
+    }
+
     calcula_Fitness(i);
     //printf("\n");
   }
@@ -208,7 +229,7 @@ void checa_Validade(){
     for(int j = 0; j < num_Itens; j++){
       if(colonia[i][j] == 1){
         for(int k = 0; k < num_Rec; k++){
-          aux[i][k] = aux[i][k] + p_Recurso[j + k * num_Itens];
+          aux[i][k] = aux[i][k] + p_Recurso[j][k];
         }
       }
     }
@@ -335,7 +356,7 @@ void movement(int index){
 
   discretize();
 
-  
+  dropAdd(index);
 
   calcula_Fitness(index);
 
@@ -397,10 +418,63 @@ int cmpFunc(const void *a, const void *b){
 	return 0;
 }
 
-void dropAdd(){
+void dropAdd(int j){
 
-  int i = 0; 
+  int i, minIndex, maxIndex; 
+  bool found;
+
+  minIndex = 0;
+
+  do{
+    found = false;
+    while(minIndex < num_Itens && !found){
+      if(colonia[j][psUtOrder[minIndex].index] == 1){
+        found = true;
+      }
+      else{
+        minIndex++;
+      }
+    }
+    colonia[j][psUtOrder[minIndex].index] = 0;
+
+    for(i = 0; i < num_Rec; i++){
+      rc[j][i] = rc[j][i] - p_Recurso[j][psUtOrder[minIndex].index];
+    }
+  } while(!isFeasible(j));
+
+  for(maxIndex = num_Itens; maxIndex >= 0; maxIndex--){
+    if(canAdd(psUtOrder[maxIndex].index)){
+      colonia[j][psUtOrder[maxIndex].index] = 1;
+      for(i = 0; i < num_Rec; i++){
+        rc[j][i] = rc[j][i] - p_Recurso[j][psUtOrder[maxIndex].index];
+      }
+    }
+  }
   
+}
+
+bool canAdd(int index){
+  int i;
+
+  for(i = 0; i < num_Rec; i++){
+    if(rc[index][i] - p_Recurso[index][i] < 0){
+      return false;
+    }
+    return true;
+  }
+
+}
+
+bool isFeasible(int index){
+  int i;
+
+  for(i = 0; i < num_Rec; i++){
+    if(rc[index][i] < 0){
+      return false;
+    }
+    return true;
+  }
+
 }
 
 void size(){
