@@ -476,8 +476,9 @@ void dropAdd(int j){
     colonia[j][psUtOrder[minIndex].index] = 0;
     //printf("teste\n");
     for(i = 0; i < num_Rec; i++){
-      //printf("teste\n");
+      printf("teste\n");
       rc[dispRc + i] = rc[dispRc + i] + p_Recurso[i * num_Itens + psUtOrder[minIndex].index];
+      printf("%d ", rc[j][i]);
       //printf("teste\n");
     }
     //printf("teste\n");
