@@ -76,16 +76,6 @@ int main(int argc, char *argv[]){
 
   total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
 
-  m = (float *) malloc(num_Colonias * sizeof(float));
-  k = (float *) malloc(num_Colonias * sizeof(float));
-  l = (float *) malloc(num_Colonias * sizeof(float));
-  energy = (double *) malloc(num_Colonias * sizeof(double));
-  psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
-
-  for(int k = 0; k < num_Colonias; k++){
-    energy[k] = energyInt;
-  }
-
   inserir_Sep(arqIn);
 
   AlocaMatriz();
@@ -175,6 +165,16 @@ void AlocaMatriz(){
     rc[i] = (int*) malloc(num_Rec * sizeof(int));
   }
 
+  m = (float *) malloc(num_Colonias * sizeof(float));
+  k = (float *) malloc(num_Colonias * sizeof(float));
+  l = (float *) malloc(num_Colonias * sizeof(float));
+  energy = (double *) malloc(num_Colonias * sizeof(double));
+  psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
+
+  for(int k = 0; k < num_Colonias; k++){
+    energy[k] = energyInt;
+  }
+
 }
 
 void LiberaMatriz(){
@@ -203,7 +203,7 @@ void LiberaMatriz(){
   free(update_cosc);
   free(fitness);
 
-  for (int i = 0; i < num_Rec; i++)
+  for (int i = 0; i < num_Colonias; i++)
     free(rc[i]);
     
   free(rc);
@@ -485,9 +485,12 @@ void dropAdd(int j){
 
   for(maxIndex = num_Itens; maxIndex >= 0; maxIndex--){
     if(canAdd(dispRc , psUtOrder[maxIndex].index)){
+      //printf("teste\n");
       colonia[j][psUtOrder[maxIndex].index] = 1;
       for(i = 0; i < num_Rec; i++){
+        //printf("antes\n");
         rc[j][i] = rc[j][i] - p_Recurso[i * num_Itens + psUtOrder[maxIndex].index];
+        //printf("depois\n");
       }
     }
   }
