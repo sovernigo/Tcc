@@ -31,7 +31,7 @@ bool isFeasible(int);
 void dropAdd(int);
 bool canAdd(int, int);
 
-int *tp_Recurso, *p_Recurso, *lim_Recurso;
+int *tp_Recurso, **p_Recurso, *lim_Recurso;
 double **colonia;
 float *fric_surf;
 float *atual_Size;
@@ -40,7 +40,7 @@ int num_Itens, num_Rec, best_Sol, total_Val;
 float *fitness;
 int parent;
 int num_Colonias;
-float *m, *k, *l;
+//float *m, *k, *l;
 float shear_Force = 2;
 double *col_Aux;
 psUtOrd *psUtOrder;
@@ -74,17 +74,27 @@ int main(int argc, char *argv[]){
   
   fscanf(arqIn, "%d %d %d", &num_Itens, &num_Rec, &best_Sol);
 
-  total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
+  //printf("%d %d %d\n", num_Colonias, num_Itens, num_Rec);
+
+  //total_Val = num_Itens * num_Rec + num_Itens + num_Rec;
 
   inserir_Sep(arqIn);
 
+  //printf("teste\n");
+
   AlocaMatriz();
 
+  //printf("teste\n");
+
   psUtCalculate();
+
+  //printf("teste\n");
 
   while(cont < num_Testes){
 
     ini_Colonia();
+
+    //printf("teste\n");
 
     prep();
 
@@ -119,57 +129,67 @@ int main(int argc, char *argv[]){
 
 void inserir_Sep(FILE *arquivo){ // função está dando falha na segmentação
 
-  tp_Recurso = (int *) malloc(num_Itens * sizeof(int));
-  p_Recurso = (int *) malloc((num_Itens * num_Rec) * sizeof(int));
-  lim_Recurso = (int *) malloc(num_Rec * sizeof(int));
+  tp_Recurso = (int *) calloc(num_Itens, sizeof(int));
+  p_Recurso = (int **) calloc((num_Itens), sizeof(int*));
+  for(int i = 0; i < num_Itens; i++){
+    p_Recurso[i] = (int*) calloc(num_Rec, sizeof(int));
+  }
+
+  lim_Recurso = (int *) calloc(num_Rec, sizeof(int));
 
   for (int j = 0; j < num_Itens; j++)
 	  fscanf(arquivo, "%d", &(tp_Recurso[j]));
 
   //Leitura da matriz de pesos
   for (int j = 0; j < num_Rec; j++){
+    //printf("teste\n");
 	  for (int k = 0; k < num_Itens; k++){
-	    fscanf(arquivo, "%d", &(p_Recurso[j * num_Itens + k]));
+	    fscanf(arquivo, "%d", &(p_Recurso[k][j]));
+      //printf("%d ", p_Recurso[k][j]);
     }
   }
 
   //Leitura do vetor de restrições
-  for (int j = 0; j < num_Rec; j++)
+  for (int j = 0; j < num_Rec; j++){
+    //printf("teste2\n");
+    //printf("%d ", j);
 	  fscanf(arquivo, "%d", &(lim_Recurso[j]));
+    //printf("%d ", lim_Recurso[j]);
+  }
 }
 
 void AlocaMatriz(){
 
   int i, j;
 
-  fitness = (float*) malloc(num_Colonias * sizeof(float));
+  fitness = (float*) calloc(num_Colonias, sizeof(float));
   for(i = 0; i < num_Colonias; i++){
     fitness[i] = 0;
   }
   
-  atual_Size = (float *) malloc(num_Colonias * sizeof(float));
-  update_cosc = (float *) malloc(num_Colonias * sizeof(float));
-  fric_surf = (float *) malloc(num_Colonias * sizeof(float));
+  atual_Size = (float *) calloc(num_Colonias, sizeof(float));
+  update_cosc = (float *) calloc(num_Colonias, sizeof(float));
+  fric_surf = (float *) calloc(num_Colonias, sizeof(float));
 
-  col_Aux = (double *) malloc(num_Itens * sizeof(double));
+  col_Aux = (double *) calloc(num_Itens, sizeof(double));
 
-  colonia = (double**) malloc(num_Colonias * sizeof(double*));
-
-  for(i = 0; i < num_Colonias; i++){
-    colonia[i] = (double*) malloc(num_Itens * sizeof(double));
-  }
-
-  rc = (int **) malloc(num_Colonias * sizeof(int*));
+  colonia = (double**) calloc(num_Colonias, sizeof(double*));
 
   for(i = 0; i < num_Colonias; i++){
-    rc[i] = (int*) malloc(num_Rec * sizeof(int));
+    colonia[i] = (double*) calloc(num_Itens, sizeof(double));
   }
 
-  m = (float *) malloc(num_Colonias * sizeof(float));
+  rc = (int **) calloc(num_Colonias, sizeof(int*));
+
+  for(i = 0; i < num_Colonias; i++){
+    rc[i] = (int*) calloc(num_Rec, sizeof(int));
+  }
+
+  /*m = (float *) malloc(num_Colonias * sizeof(float));
   k = (float *) malloc(num_Colonias * sizeof(float));
-  l = (float *) malloc(num_Colonias * sizeof(float));
-  energy = (double *) malloc(num_Colonias * sizeof(double));
-  psUtOrder = (psUtOrd *) malloc(num_Itens * sizeof(psUtOrd));
+  l = (float *) malloc(num_Colonias * sizeof(float));*/
+  energy = (double *) calloc(num_Colonias, sizeof(double));
+  psUtOrder = (psUtOrd *) calloc(num_Itens, sizeof(psUtOrd));
 
   for(int k = 0; k < num_Colonias; k++){
     energy[k] = energyInt;
@@ -187,11 +207,13 @@ void LiberaMatriz(){
   //Libera a matriz
   free(colonia);
 
-  free(l);
-  free(k);
-  free(m);
+  //free(l);
+  //free(k);
+  //free(m);
 
   free(tp_Recurso);
+  for (int i = 0; i < num_Itens; i++)
+    free(p_Recurso[i]);
   free(p_Recurso);
   free(lim_Recurso);
   free(col_Aux);
@@ -218,7 +240,7 @@ void ini_Colonia(){
   for(i = 0; i < num_Colonias; i++){
     for(j = 0; j < num_Rec; j++){
       rc[i][j] = lim_Recurso[j];
-      //printf("%d ", rc[i][l]);
+      //printf("%d ", rc[i][j]);
     }
   }
 
@@ -226,73 +248,30 @@ void ini_Colonia(){
 	  for (j = 0; j < num_Itens; j++){
       colonia[i][j] = rand() % 2;
       //printf("%lf ", colonia[i][j]);
-      if(colonia[i][j] == 1){
+      if(colonia[i][j] == 1.0){
         for(l = 0; l < num_Rec; l++){
-          rc[i][l] = rc[i][l] - p_Recurso[l * num_Itens + j];
+          //printf("%d ", l);
+          rc[i][l] = rc[i][l] - p_Recurso[l][j];
           //printf("%d ", rc[i][l]);
         }
       }
+      if(!isFeasible(i)){
+        dropAdd(i);
+      }
+
     }
-    //printf("\n");
-    if(!isFeasible(i)){
-      dropAdd(i);
-    }
-    calcula_Fitness(i);
+
+  //printf("\n");
+  calcula_Fitness(i);
   }
 }
-
-/*void checa_Validade(){
-  int aux[num_Colonias][num_Itens];
-  bool valido = true;
-
-  for(int i = 0; i < num_Colonias; i++){
-    for(int k = 0; k < num_Rec; k++){
-      aux[i][k] = 0;
-      }
-    }
-
-  for(int i = 0; i < num_Colonias; i++){
-    valido = true;
-
-    for(int j = 0; j < num_Itens; j++){
-      if(colonia[i][j] == 1){
-        for(int k = 0; k < num_Rec; k++){
-          aux[i][k] = aux[i][k] + p_Recurso[j * num_Itens + k];
-        }
-      }
-    }
-    for(int k = 0; k < num_Rec; k++){
-      if(aux[i][k] > lim_Recurso[k]){
-        valido = false;
-      }
-    }
-  }
-
-}*/
-
-/*void calcula_Fitness(int index, int num_Itens){
-
-  fit_Colonia = (int *) malloc(num_Colonias * sizeof(int));
-
-  int i, j;
-
-  for(i = 0; i < num_Colonias; i++){
-    for(j = 0; j < num_Itens; j++){
-      if(colonia[i][j] == 1){
-        fit_Colonia[i] = fit_Colonia[i] + tp_Recurso[j];
-      }
-      //printf("%d ", fit_Colonia[i]);  
-    }
-    //printf("%d ", fit_Colonia[i]);  
-  }
-}*/
 
 void calcula_Fitness(int index){
 
   int i;
 
   for(i = 0; i < num_Itens; i++){
-    fitness[index] = fitness[index] + colonia[index][i] * p_Recurso[i];
+    fitness[index] = fitness[index] + colonia[index][i] * tp_Recurso[i];
     //printf("%lf ", fitness[index]);
   }
 
@@ -349,7 +328,7 @@ void movement(int index){
   double p;
   double alpha, beta;
   int m, k, l;
-  float rand1 = (rand() / (float) RAND_MAX);
+  //float rand1 = (rand() / (float) RAND_MAX);
   double fit;
 
   // (rand() % (upper - lower + 1)) + lower;
@@ -376,6 +355,7 @@ void movement(int index){
   discretize();
 
   //printf("teste\n");
+  //printf("%d\n", index);
 
   dropAdd(index);
 
@@ -421,7 +401,7 @@ void psUtCalculate(){
     delta = 0.0;
     
     for(j = 0; j < num_Rec; j++){
-      delta += p_Recurso[i + j * num_Itens];
+      delta += p_Recurso[j][i];
     }
     psUtOrder[i].psUt = tp_Recurso[i] / delta;		
 		psUtOrder[i].index = i;
@@ -451,7 +431,7 @@ void dropAdd(int j){
   int dispRc;
   bool found;
 
-  dispRc = j * num_Rec;
+  dispRc = j * num_Itens;
 
   minIndex = 0;
 
@@ -460,12 +440,12 @@ void dropAdd(int j){
   do{
     found = false;
     while(minIndex < num_Itens && !found){
-      //printf("%d\n", minIndex);
-      //printf("%d\n ",psUtOrder[minIndex].index);
+      //printf("%d\n",psUtOrder[minIndex].index);
       //printf("depois da colonia");
+      //printf("%lf ", colonia[j][psUtOrder[minIndex].index]);
       if(colonia[j][psUtOrder[minIndex].index] == 1){
         found = true;
-        //printf("teste\n");
+        //printf("%lf ", colonia[j][psUtOrder[minIndex].index]);
       }
       else{
         minIndex++;
@@ -476,34 +456,37 @@ void dropAdd(int j){
     colonia[j][psUtOrder[minIndex].index] = 0;
     //printf("teste\n");
     for(i = 0; i < num_Rec; i++){
-      printf("teste\n");
-      rc[dispRc + i] = rc[dispRc + i] + p_Recurso[i * num_Itens + psUtOrder[minIndex].index];
-      printf("%d ", rc[j][i]);
+      //printf("teste\n");
+      rc[j][i] = rc[j][i] + p_Recurso[i][psUtOrder[minIndex].index];
+      //printf("%d ", rc[j][i]);
       //printf("teste\n");
     }
     //printf("teste\n");
   } while(!isFeasible(j));
 
   for(maxIndex = num_Itens; maxIndex >= 0; maxIndex--){
-    if(canAdd(dispRc , psUtOrder[maxIndex].index)){
+    if(canAdd(j , psUtOrder[maxIndex].index)){
       //printf("teste\n");
       colonia[j][psUtOrder[maxIndex].index] = 1;
       for(i = 0; i < num_Rec; i++){
         //printf("antes\n");
-        rc[j][i] = rc[j][i] - p_Recurso[i * num_Itens + psUtOrder[maxIndex].index];
+        rc[j][i] = rc[j][i] - p_Recurso[i][psUtOrder[maxIndex].index];
         //printf("depois\n");
       }
+    }
+    else{
+      colonia[j][psUtOrder[maxIndex].index] = 0;
     }
   }
   //printf("teste\n");
   
 }
 
-bool canAdd(int dispRc,int index){
+bool canAdd(int j,int index){
   int i;
 
   for(i = 0; i < num_Rec; i++){
-    if(rc[dispRc + i] - p_Recurso[index * num_Itens + i] < 0){
+    if(rc[j][i] - p_Recurso[i][index] < 0){
       //printf("alou\n");
       return false;
     }
@@ -515,11 +498,13 @@ bool canAdd(int dispRc,int index){
 bool isFeasible(int index){
   int i, displRc;
 
+  //printf("testef\n");
+
   displRc = index * num_Rec;
 
   for(i = 0; i < num_Rec; i++){
-    if(rc[displRc + i] < 0){
-      //printf("teste\n");
+    if(rc[index][i] < 0){
+      //printf("testef\n");
       return false;
     }
     //printf("index\n ");
