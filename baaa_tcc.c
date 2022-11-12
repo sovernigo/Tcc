@@ -125,6 +125,8 @@ int main(int argc, char *argv[]){
 
   fclose(arqIn);
 
+  return 0;
+
 }
 
 void inserir_Sep(FILE *arquivo){ // função está dando falha na segmentação
@@ -201,7 +203,7 @@ void LiberaMatriz(){
 
 
   //Libera cada linha da matriz
-  for (int i = 0; i < num_Itens; i++)
+  for (int i = 0; i < num_Colonias; i++)
 	  free(colonia[i]);
 
   //Libera a matriz
@@ -212,7 +214,7 @@ void LiberaMatriz(){
   //free(m);
 
   free(tp_Recurso);
-  for (int i = 0; i < num_Itens; i++)
+  for (int i = 0; i < num_Rec; i++)
     free(p_Recurso[i]);
   free(p_Recurso);
   free(lim_Recurso);
@@ -226,8 +228,7 @@ void LiberaMatriz(){
   free(fitness);
 
   for (int i = 0; i < num_Colonias; i++)
-    free(rc[i]);
-    
+    free(rc[i]); 
   free(rc);
   
 }
@@ -305,7 +306,7 @@ void tournament_Select(){
 
   //printf("teste\n");
 
-  pool = (int*) malloc(poolSize * sizeof(int));
+  pool = (int*) calloc(poolSize, sizeof(int));
 
   for (i = 0; i < poolSize; i++){
     pool[i] = rand() % num_Colonias;
