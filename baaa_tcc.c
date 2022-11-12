@@ -431,8 +431,7 @@ void dropAdd(int j){
     else{
       colonia[j][psUtOrder[maxIndex].index] = 0;
     }
-  
-  
+  }
 }
 
 bool canAdd(int j,int index){
