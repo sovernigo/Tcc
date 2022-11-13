@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include <math.h>
 #include <inttypes.h>
 
@@ -32,6 +32,8 @@ int cmpFunc(const void*, const void*);
 bool isFeasible(int);
 void dropAdd(int);
 bool canAdd(int, int);
+void sizeMovement();
+bool isDuplicated(int, int);
 void writeBestResult(FILE*, char*, double, int);
 
 int *tp_Recurso, **p_Recurso, *lim_Recurso;
@@ -39,7 +41,7 @@ double **colonia;
 float *fric_surf;
 float *atual_Size;
 float *update_cosc;
-int num_Itens, num_Rec, best_Sol, total_Val;
+int num_Itens, num_Rec, bestSol, total_Val;
 float *fitness;
 int parent;
 int num_Colonias;
@@ -52,6 +54,26 @@ double energyInt;
 int **rc;
 bool isStarve;
 int *starvation;
+float adaptProb = 0.5;
+int starveCol = 0;
+
+int biggerIndex, smallerIndex = 0;
+
+int* vetSols;
+float* vetGaps;
+float* vetTimes;
+double avgSol;
+double mediumGap;
+double mediumTime;
+double dpSols;
+double dpTimes;
+double dpGaps;
+int bestOverallSolValue;
+int bestSolValue;
+double bestOverallTime;
+double bestOverallGap;
+int numOpt;
+int numBetter;
 
 
 int main(int argc, char *argv[]){
@@ -64,9 +86,18 @@ int main(int argc, char *argv[]){
 
   char entrada[40];
 
+  FILE* fileOut = NULL;
+
+  char fileOutName[40];
+
+  struct timeval start, finish;
+  double totalTime;
+
   strcpy(entrada, argv[1]);
   num_Colonias = atoi(argv[2]);
   energyInt = atoi(argv[3]);
+
+  sprintf(fileOutName, "%s_cb%s", entrada, ".out");
 
   arqIn = fopen(entrada, "r");
 
@@ -75,7 +106,19 @@ int main(int argc, char *argv[]){
     exit(1);
   }
   
-  fscanf(arqIn, "%d %d %d", &num_Itens, &num_Rec, &best_Sol);
+  fscanf(arqIn, "%d %d %d", &num_Itens, &num_Rec, &bestSol);
+
+  vetSols = (int*) calloc(EXECS, sizeof(int));
+  vetGaps = (float*) calloc(EXECS, sizeof(float));
+	vetTimes = (float*) calloc(EXECS, sizeof(float));
+    
+  avgSol = 0.0;
+	mediumTime = 0.0;
+	mediumGap = 0.0;
+	bestOverallSolValue = 0;
+	numOpt = 0;
+
+  srand(time(NULL));
 
   inserir_Sep(arqIn);
 
@@ -85,10 +128,11 @@ int main(int argc, char *argv[]){
 
   while(cont < EXECS){
 
+    gettimeofday(&start, NULL);
+
     ini_Colonia();
 
     prep();
-
 
     for(int k = 0; k < num_Colonias; k++){
 
@@ -108,13 +152,58 @@ int main(int argc, char *argv[]){
 
         movement(k);
 
+        size(k);
+
         if(isStarve){
           starvation[k]++;
         }
+        if(starvation[k] > starvation[starveCol]){
+          starveCol = k;
+        }
       }
     }
+
+    sizeMovement();
+
+    gettimeofday(&finish, NULL);
+
+		long start_usecs, finish_usecs, diff_usecs;
+
+		finish_usecs = finish.tv_usec + (1000000 * finish.tv_sec);
+		start_usecs = start.tv_usec + (1000000 * start.tv_sec);
+		diff_usecs = finish_usecs - start_usecs;
+
+		totalTime = (double)(diff_usecs) / 1000000;
+
+    bestSolValue = fitness[biggerIndex];
+
+		vetGaps[cont] = (float)(bestSol - bestSolValue) / bestSol * 100;
+		vetTimes[cont] = totalTime;
+    vetSols[cont] = bestSolValue;
+		
+    writeBestResult(fileOut, fileOutName, totalTime, cont);
+        
+    avgSol += bestSolValue;
+		mediumTime += totalTime;
+		mediumGap += vetGaps[cont];
+		
+		if (bestSolValue >= bestOverallSolValue){
+			bestOverallSolValue = bestSolValue;
+			bestOverallTime = totalTime;
+		}
+		
+		if (vetGaps[cont] == 0.0)
+			numOpt++;
+		else if (vetGaps[cont] < 0.0)
+			numBetter++;
+
     cont++;
+
   }
+
+  free(vetSols);
+	free(vetGaps);
+	free(vetTimes);
 
   LiberaMatriz();
 
@@ -161,10 +250,6 @@ void AlocaMatriz(){
   
   starvation = (int*) calloc(num_Colonias, sizeof(int));
 
-  for(i = 0; i < num_Colonias; i++){
-    starvation[i] = 0;
-  }
-
   atual_Size = (float *) calloc(num_Colonias, sizeof(float));
   update_cosc = (float *) calloc(num_Colonias, sizeof(float));
   fric_surf = (float *) calloc(num_Colonias, sizeof(float));
@@ -185,10 +270,6 @@ void AlocaMatriz(){
 
   energy = (double *) calloc(num_Colonias, sizeof(double));
   psUtOrder = (psUtOrd *) calloc(num_Itens, sizeof(psUtOrd));
-
-  for(int k = 0; k < num_Colonias; k++){
-    energy[k] = energyInt;
-  }
 
 }
 
@@ -226,15 +307,16 @@ void LiberaMatriz(){
 void ini_Colonia(){
   int i, j, l;
 
-  srand(time(NULL));
-
   for(i = 0; i < num_Colonias; i++){
+
+    starvation[i] = 0;
+
+    do{
+
     for(j = 0; j < num_Rec; j++){
       rc[i][j] = lim_Recurso[j];
     }
-  }
 
-  for (i = 0; i < num_Colonias; i++){
 	  for (j = 0; j < num_Itens; j++){
       colonia[i][j] = rand() % 2;
       if(colonia[i][j] == 1.0){
@@ -246,9 +328,23 @@ void ini_Colonia(){
         dropAdd(i);
       }
 
-    }
+     }
+    }while(isDuplicated(i, i - 1));
   calcula_Fitness(i);
   }
+}
+
+bool isDuplicated(int atual, int last){
+  for(int i = 0; i < last; i++){
+    int j = 0;
+    while(j < num_Itens && (colonia[atual][j] == colonia[i][j])){
+      j++;
+    }
+    if(j == num_Itens){
+      return true;
+    }
+  }
+  return false;
 }
 
 void calcula_Fitness(int index){
@@ -269,6 +365,13 @@ void prep(){
   for(i = 0; i < num_Colonias; i++){
     atual_Size[i] = 1.0;
   }
+
+  biggerIndex, smallerIndex = 0;
+
+  for(int k = 0; k < num_Colonias; k++){
+    energy[k] = energyInt;
+  }
+
 }
 
 void tournament_Select(){
@@ -302,41 +405,42 @@ void movement(int index){
 
   // float rand1 = (rand() / (float) RAND_MAX);
 
-  p = ((double)rand() / (RAND_MAX / 2) - 1);
-  alpha = ((double)rand() / (RAND_MAX / (2 * M_PI)));
-  beta = ((double)rand() / (RAND_MAX / (2 * M_PI)));
+    p = ((double)rand() / (RAND_MAX / 2) - 1);
+    alpha = ((double)rand() / (RAND_MAX / (2 * M_PI)));
+    beta = ((double)rand() / (RAND_MAX / (2 * M_PI)));
 
-  m = rand() % num_Itens;
-  k = rand() % num_Itens;
-  l = rand() % num_Itens;
+    m = rand() % num_Itens;
+    k = rand() % num_Itens;
+    l = rand() % num_Itens;
 
-  fit = fitness[index];
+    fit = fitness[index];
 
-  for(int i = 0; i < num_Itens; i++){
-    col_Aux[i] = colonia[index][i];
-  }
+    for(int i = 0; i < num_Itens; i++){
+      col_Aux[i] = colonia[index][i];
+    }
 
-  colonia[index][m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-	colonia[index][k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
-  colonia[index][l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+    colonia[index][m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
+    colonia[index][k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+    colonia[index][l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
 
-  discretize(index);
+    discretize(index);
 
-  dropAdd(index);
+    if(!isFeasible(index))
+      dropAdd(index);
 
   energy[index] = energy[index] - energyLoss;
 
   calcula_Fitness(index);
 
-  if(fit > fitness[index]){
+  if(fit >= fitness[index]){
     for(int i = 0; i < num_Itens; i++){
       colonia[index][i] = col_Aux[i];
     }
-    isStarve = false;
+    energy[index] = energy[index] - energyLoss;
     fitness[index] = fit;
   }
   else{
-    energy[index] = energy[index] - energyLoss;
+    isStarve = false;
   }
 }
 
@@ -416,6 +520,7 @@ void dropAdd(int j){
       rc[j][i] = rc[j][i] + p_Recurso[i][psUtOrder[minIndex].index];
 
     }
+
   } while(!isFeasible(j));
 
   for(maxIndex = num_Itens; maxIndex >= 0; maxIndex--){
@@ -464,6 +569,8 @@ void size(int index){
 
   double raiz, aux;
 
+  double diff = atual_Size[index] - atual_Size[smallerIndex];
+
   update_cosc[index] =  (atual_Size[index] + 4*(fitness[index]))/
                       (atual_Size[index] + 2*(fitness[index]));
   aux = (3 * atual_Size[index])/(4 * M_PI);
@@ -471,4 +578,62 @@ void size(int index){
   fric_surf[index] = 2 * M_1_PI * (raiz);
 
   atual_Size[index] = update_cosc[index] * atual_Size[index];
+
+  if(atual_Size[index] > atual_Size[biggerIndex]){
+    biggerIndex = index;
+  }
+  if(diff < 0.0){
+    smallerIndex = index;
+  }
+}
+
+void sizeMovement(){
+  int d;
+  double rand2;
+
+  d = rand() % num_Itens;
+
+  rand2 = ((double)rand() / (RAND_MAX));
+
+  if(rand2 < adaptProb){
+    colonia[smallerIndex][d] = (colonia[biggerIndex][d] - colonia[smallerIndex][d]) * rand2;
+    discretize(smallerIndex);
+    dropAdd(smallerIndex);
+    calcula_Fitness(smallerIndex);
+  }
+}
+
+void writeBestResult(FILE* f, char* nome, double time, int exec)
+{
+	FILE* fGaps;
+	FILE* fSols;
+	FILE* fTimes;
+
+    f = fopen(nome, "a+");
+	fGaps = fopen("seq_allgaps_nopr.out", "a+");
+	fSols = fopen("seq_allsols.out", "a+");
+	fTimes = fopen("seq_alltimes_nopr.out", "a+");
+
+	float bestGap = (float)(bestSol - bestSolValue) / bestSol * 100;
+
+    fprintf(f, "Execução: %d\nTempo Total: %.4f\n Valor da Melhor Solução: %d", 
+            exec + 1, time, bestSolValue);
+    fprintf(f, "\nEnergia inicial = %lf\nSolução ótima = %d\nMelhor solução encontrada = %d\nMelhor índice = %d\nGap: %f%%\n",
+		energyInt, bestSol, bestSolValue, biggerIndex, bestGap);
+
+	fprintf(fGaps,"%.4f\n", bestGap);
+	fprintf(fSols,"%d\n", bestSolValue);
+	fprintf(fTimes,"%.4f\n", time);
+
+  fprintf(f, "Solução:\n");
+
+  for (int i = 0; i < num_Itens; i++)
+    fprintf(f, "%d ", (int)(colonia[biggerIndex][i]));
+
+  fprintf(f, "\n\n");
+
+  fclose(f);
+  fclose(fGaps);
+  fclose(fSols);
+	fclose(fTimes);
 }
