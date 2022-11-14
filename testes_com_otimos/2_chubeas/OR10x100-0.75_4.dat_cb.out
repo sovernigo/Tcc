@@ -1,0 +1,110 @@
+Execução: 1
+Tempo Total: 0.1299
+ Valor da Melhor Solução: 75183
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 75183
+Melhor índice = 93
+Gap: -21.329439%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 2
+Tempo Total: 0.1107
+ Valor da Melhor Solução: 73546
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 73546
+Melhor índice = 75
+Gap: -18.687668%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 3
+Tempo Total: 0.1139
+ Valor da Melhor Solução: 73945
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 73945
+Melhor índice = 88
+Gap: -19.331568%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 4
+Tempo Total: 0.1115
+ Valor da Melhor Solução: 75183
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 75183
+Melhor índice = 91
+Gap: -21.329439%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 5
+Tempo Total: 0.1130
+ Valor da Melhor Solução: 73900
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 73900
+Melhor índice = 90
+Gap: -19.258949%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 6
+Tempo Total: 0.1133
+ Valor da Melhor Solução: 74644
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 74644
+Melhor índice = 97
+Gap: -20.459608%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 7
+Tempo Total: 0.1103
+ Valor da Melhor Solução: 74519
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 74519
+Melhor índice = 91
+Gap: -20.257883%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 8
+Tempo Total: 0.1125
+ Valor da Melhor Solução: 73981
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 73981
+Melhor índice = 91
+Gap: -19.389666%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 9
+Tempo Total: 0.1150
+ Valor da Melhor Solução: 75183
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 75183
+Melhor índice = 81
+Gap: -21.329439%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+
+Execução: 10
+Tempo Total: 0.1087
+ Valor da Melhor Solução: 75183
+Energia inicial = 100.000000
+Solução ótima = 61966
+Melhor solução encontrada = 75183
+Melhor índice = 92
+Gap: -21.329439%
+Solução:
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 
+

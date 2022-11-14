@@ -1,0 +1,110 @@
+Execução: 1
+Tempo Total: 0.1280
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 95
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 2
+Tempo Total: 0.1277
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 94
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 3
+Tempo Total: 0.1272
+ Valor da Melhor Solução: 68652
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 68652
+Melhor índice = 92
+Gap: -168.266190%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 4
+Tempo Total: 0.1268
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 98
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 5
+Tempo Total: 0.1320
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 78
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 6
+Tempo Total: 0.1280
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 87
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 7
+Tempo Total: 0.1280
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 94
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 8
+Tempo Total: 0.1272
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 95
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 9
+Tempo Total: 0.1272
+ Valor da Melhor Solução: 66516
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 66516
+Melhor índice = 95
+Gap: -159.919495%
+Solução:
+1 0 0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 0 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+
+Execução: 10
+Tempo Total: 0.1285
+ Valor da Melhor Solução: 69353
+Energia inicial = 100.000000
+Solução ótima = 25591
+Melhor solução encontrada = 69353
+Melhor índice = 92
+Gap: -171.005432%
+Solução:
+1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 
+

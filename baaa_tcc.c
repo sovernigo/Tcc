@@ -319,6 +319,7 @@ void ini_Colonia(){
 
 	  for (j = 0; j < num_Itens; j++){
       colonia[i][j] = rand() % 2;
+
       if(colonia[i][j] == 1.0){
         for(l = 0; l < num_Rec; l++){
           rc[i][l] = rc[i][l] - p_Recurso[l][j];
@@ -402,37 +403,59 @@ void movement(int index){
   double alpha, beta;
   int m, k, l;
   double fit;
+  int auxRc[num_Rec];
 
   // float rand1 = (rand() / (float) RAND_MAX);
 
-    p = ((double)rand() / (RAND_MAX / 2) - 1);
-    alpha = ((double)rand() / (RAND_MAX / (2 * M_PI)));
-    beta = ((double)rand() / (RAND_MAX / (2 * M_PI)));
+  p = ((double)rand() / (RAND_MAX / 2) - 1);
+  alpha = ((double)rand() / (RAND_MAX / (2 * M_PI)));
+  beta = ((double)rand() / (RAND_MAX / (2 * M_PI)));
 
-    m = rand() % num_Itens;
-    k = rand() % num_Itens;
-    l = rand() % num_Itens;
+  m = rand() % num_Itens;
+  k = rand() % num_Itens;
+  l = rand() % num_Itens;
 
-    fit = fitness[index];
+  fit = fitness[index];
 
-    for(int i = 0; i < num_Itens; i++){
-      col_Aux[i] = colonia[index][i];
+  for(int i = 0; i < num_Itens; i++){
+    col_Aux[i] = colonia[index][i];
+  }
+  for(int i = 0; i < num_Rec; i++){
+    auxRc[i] = rc[index][i];
+  }
+
+  colonia[index][m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
+  colonia[index][k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
+  colonia[index][l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
+
+  discretize(index);
+
+  for(int i = 0; i < num_Rec; i++){
+    if(colonia[index][m] == 1.0){
+      rc[index][i] = rc[index][i] - p_Recurso[i][m];
     }
+      if(colonia[index][m] == 1.0){
+      rc[index][i] = rc[index][i] - p_Recurso[i][k];
+    }
+      if(colonia[index][m] == 1.0){
+      rc[index][i] = rc[index][i] - p_Recurso[i][l];
+    }
+  }
 
-    colonia[index][m] = colonia[index][m] + (colonia[parent][m] - colonia[index][m]) * (shear_Force - fric_surf[index] * p);
-    colonia[index][k] = colonia[index][k] + (colonia[parent][k] - colonia[index][k]) * (shear_Force - fric_surf[index] * cos(alpha));
-    colonia[index][l] = colonia[index][l] + (colonia[parent][l] - colonia[index][l]) * (shear_Force - fric_surf[index] * sin(beta));
-
-    discretize(index);
-
-    if(!isFeasible(index))
-      dropAdd(index);
+  if(!isFeasible(index)){
+    for(int i = 0; i < num_Rec; i++){
+      rc[index][i] = rc[index][i] + p_Recurso[i][m];
+      rc[index][i] = rc[index][i] + p_Recurso[i][k];
+      rc[index][i] = rc[index][i] + p_Recurso[i][l];
+    }
+    dropAdd(index);
+  }
 
   energy[index] = energy[index] - energyLoss;
 
   calcula_Fitness(index);
 
-  if(fit >= fitness[index]){
+  if(fit > fitness[index]){
     for(int i = 0; i < num_Itens; i++){
       colonia[index][i] = col_Aux[i];
     }
@@ -527,14 +550,10 @@ void dropAdd(int j){
     if(canAdd(j , psUtOrder[maxIndex].index)){
 
       colonia[j][psUtOrder[maxIndex].index] = 1;
+
       for(i = 0; i < num_Rec; i++){
-
         rc[j][i] = rc[j][i] - p_Recurso[i][psUtOrder[maxIndex].index];
-
       }
-    }
-    else{
-      colonia[j][psUtOrder[maxIndex].index] = 0;
     }
   }
 }
@@ -546,23 +565,21 @@ bool canAdd(int j,int index){
     if(rc[j][i] - p_Recurso[i][index] < 0){
       return false;
     }
-    return true;
   }
-
+  return true;
 }
 
 bool isFeasible(int index){
-  int i, displRc;
-
-  displRc = index * num_Rec;
+  int i;
 
   for(i = 0; i < num_Rec; i++){
     if(rc[index][i] < 0){
+      //printf("%d ", rc[index][i]);
       return false;
     }
-    return true;
   }
-
+  //printf("%d ", rc[index][i]);
+  return true;
 }
 
 void size(int index){
@@ -598,7 +615,9 @@ void sizeMovement(){
   if(rand2 < adaptProb){
     colonia[smallerIndex][d] = (colonia[biggerIndex][d] - colonia[smallerIndex][d]) * rand2;
     discretize(smallerIndex);
-    dropAdd(smallerIndex);
+    if(!isFeasible(smallerIndex)){
+      dropAdd(smallerIndex);
+    }
     calcula_Fitness(smallerIndex);
   }
 }
