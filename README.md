@@ -10,6 +10,6 @@ Implementações realizadas em C++ a fim de facilitar a manipulação dos dados 
 
 Para a compilação e execução é necessária a utilização das linhas de comando conforme abaixo:
 
-Compilação: 
+Compilação: g++ baaa_tcc.cpp -o exec -lm
 
-Execução: 
+Execução: ./nome_do_arquivo número_de_colônias quantidade_de_energia
